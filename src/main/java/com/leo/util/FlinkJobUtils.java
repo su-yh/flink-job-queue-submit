@@ -1,5 +1,6 @@
 package com.leo.util;
 
+import com.leo.constants.enums.JobNameEnums;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
@@ -13,6 +14,19 @@ import java.io.InputStreamReader;
 @Slf4j
 public class FlinkJobUtils {
     private static final String JOB_ID_PREV = "Job has been submitted with JobID ";
+
+    public static String buildJobSubmitCommand(JobNameEnums jobName, String flinkHome, String jobJar, int dates, String pns) {
+        switch (jobName) {
+            case COHORT:
+                return buildCohortJobSubmitCommand(flinkHome, jobJar, dates, pns);
+            case REALTIME:
+                return buildRealtimeJobSubmitCommand(flinkHome, jobJar, dates, pns);
+            case REPETITION:
+                return buildRepetitionJobSubmitCommand(flinkHome, jobJar, dates, pns);
+            default:
+                throw new RuntimeException("UNKNOWN jobName: " + jobName);
+        }
+    }
 
     public static String buildCohortJobSubmitCommand(String flinkHome, String jobJar, int dates, String pns) {
         return String.format("/bin/bash %s/bin/flink run -d -p 4 %s/%s --cds.flink.batch.date=%d --cds.flink.batch.pns=%s",

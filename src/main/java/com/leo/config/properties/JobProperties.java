@@ -1,8 +1,10 @@
 package com.leo.config.properties;
 
+import com.leo.constants.enums.JobNameEnums;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author suyh
@@ -11,6 +13,9 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class JobProperties {
     private boolean enabled = true;
+
+    @NotNull
+    private JobNameEnums jobName;
 
     @NotBlank
     private String jarPath;

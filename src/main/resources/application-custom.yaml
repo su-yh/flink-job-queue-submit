@@ -17,13 +17,15 @@ flink:
         dates-last: 20240117
         pns: "inr,cny,brl,pkr,hy"
         restart-job-number: 30
-        job-cohort:
-          enabled: true
-          jar-path: "job-jar/flink-cohort-job-3.2.0.jar"
-        job-realtime:
-          enabled: true
-          jar-path: "job-jar/realtime-trend-job-3.2.0.jar"
-        job-repetition:
-          enabled: true
-          jar-path: "job-jar/cdap-repetition-job-3.2.0.jar"
+#        jobs:
+#          - job-name: cohort
+#            enabled: true
+#            jar-path: "job-jar/flink-cohort-job-3.2.0.jar"
+#          - job-name: realtime
+#            enabled: true
+#            jar-path: "job-jar/realtime-trend-job-3.2.0.jar"
+#          - job-name: repetition
+#            enabled: true
+#            jar-path: "job-jar/cdap-repetition-job-3.2.0.jar"
+
 

@@ -8,6 +8,8 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author suyh
@@ -41,11 +43,5 @@ public class BaseProperties {
 
     @NestedConfigurationProperty
     @Valid
-    private final JobProperties jobCohort = new JobProperties();
-    @NestedConfigurationProperty
-    @Valid
-    private final JobProperties jobRealtime = new JobProperties();
-    @NestedConfigurationProperty
-    @Valid
-    private final JobProperties jobRepetition = new JobProperties();
+    private final List<JobProperties> jobs = new ArrayList<>();
 }

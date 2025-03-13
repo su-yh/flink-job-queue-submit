@@ -73,12 +73,7 @@ public class FlinkQueueJobRunner implements ApplicationRunner {
 
     private void doRun() {
         String flinkHome = properties.getFlinkHome();
-        JobProperties jobCohort = properties.getJobCohort();
-        JobProperties jobRealtime = properties.getJobRealtime();
-        JobProperties jobRepetition = properties.getJobRepetition();
-//        String cohortJobJar = properties.getCohortJobJar();
-//        String realtimeJobJar = properties.getRealtimeJobJar();
-//        String repetitionJobJar = properties.getRepetitionJobJar();
+        List<JobProperties> jobs = properties.getJobs();
         Integer datesStart = properties.getDatesStart();
         Integer datesLast = properties.getDatesLast();
         Integer restartJobNumber = properties.getRestartJobNumber();
@@ -94,13 +89,18 @@ public class FlinkQueueJobRunner implements ApplicationRunner {
         for (int i = 0; i <= betweenDays; i++) {
             int dates = CdapDateUtils.plusDays(datesStart, i);
 
-            if (jobCohort.isEnabled()) {
+            for (JobProperties job : jobs) {
+                if (!job.isEnabled()) {
+                    continue;
+                }
+
                 log.info("wait flink cluster idle.");
                 waitFlinkClusterIdle();
-                String command = FlinkJobUtils.buildCohortJobSubmitCommand(flinkHome, jobCohort.getJarPath(), dates, pns);
-                log.info("submit cohort job, command: {}", command);
+
+                String command = FlinkJobUtils.buildJobSubmitCommand(job.getJobName(), flinkHome, job.getJarPath(), dates, pns);
+                log.info("submit {} job, command: {}", job.getJobName(), command);
                 String jobId = FlinkJobUtils.flinkJobSubmit(command);
-                log.info("submit cohort job finished, dates: {}, jobId: {}", dates, jobId);
+                log.info("submit {} job finished, dates: {}, jobId: {}", job.getJobName(), dates, jobId);
                 if (jobId == null) {
                     return;
                 }
@@ -108,33 +108,47 @@ public class FlinkQueueJobRunner implements ApplicationRunner {
                 waitJobFinished(jobId);
             }
 
-            if (jobRealtime.isEnabled()) {
-                log.info("wait flink cluster idle.");
-                waitFlinkClusterIdle();
-                String command = FlinkJobUtils.buildRealtimeJobSubmitCommand(flinkHome, jobRealtime.getJarPath(), dates, pns);
-                log.info("submit realtime job, command: {}", command);
-                String jobId = FlinkJobUtils.flinkJobSubmit(command);
-                log.info("submit realtime job finished, dates: {}, jobId: {}", dates, jobId);
-                if (jobId == null) {
-                    return;
-                }
-                jobSubmitCount++;
-                waitJobFinished(jobId);
-            }
-
-            if (jobRepetition.isEnabled()) {
-                log.info("wait flink cluster idle.");
-                waitFlinkClusterIdle();
-                String command = FlinkJobUtils.buildRepetitionJobSubmitCommand(flinkHome, jobRepetition.getJarPath(), dates, pns);
-                log.info("submit repetition job, command: {}", command);
-                String jobId = FlinkJobUtils.flinkJobSubmit(command);
-                log.info("submit repetition job finished, dates: {}, jobId: {}", dates, jobId);
-                if (jobId == null) {
-                    return;
-                }
-                jobSubmitCount++;
-                waitJobFinished(jobId);
-            }
+//            if (jobCohort.isEnabled()) {
+//                log.info("wait flink cluster idle.");
+//                waitFlinkClusterIdle();
+//                String command = FlinkJobUtils.buildCohortJobSubmitCommand(flinkHome, jobCohort.getJarPath(), dates, pns);
+//                log.info("submit cohort job, command: {}", command);
+//                String jobId = FlinkJobUtils.flinkJobSubmit(command);
+//                log.info("submit cohort job finished, dates: {}, jobId: {}", dates, jobId);
+//                if (jobId == null) {
+//                    return;
+//                }
+//                jobSubmitCount++;
+//                waitJobFinished(jobId);
+//            }
+//
+//            if (jobRealtime.isEnabled()) {
+//                log.info("wait flink cluster idle.");
+//                waitFlinkClusterIdle();
+//                String command = FlinkJobUtils.buildRealtimeJobSubmitCommand(flinkHome, jobRealtime.getJarPath(), dates, pns);
+//                log.info("submit realtime job, command: {}", command);
+//                String jobId = FlinkJobUtils.flinkJobSubmit(command);
+//                log.info("submit realtime job finished, dates: {}, jobId: {}", dates, jobId);
+//                if (jobId == null) {
+//                    return;
+//                }
+//                jobSubmitCount++;
+//                waitJobFinished(jobId);
+//            }
+//
+//            if (jobRepetition.isEnabled()) {
+//                log.info("wait flink cluster idle.");
+//                waitFlinkClusterIdle();
+//                String command = FlinkJobUtils.buildRepetitionJobSubmitCommand(flinkHome, jobRepetition.getJarPath(), dates, pns);
+//                log.info("submit repetition job, command: {}", command);
+//                String jobId = FlinkJobUtils.flinkJobSubmit(command);
+//                log.info("submit repetition job finished, dates: {}, jobId: {}", dates, jobId);
+//                if (jobId == null) {
+//                    return;
+//                }
+//                jobSubmitCount++;
+//                waitJobFinished(jobId);
+//            }
 
             if (jobSubmitCount - prevRestartFlinkClusterJobCount >= restartJobNumber) {
                 restartFlinkCluster(flinkHome);
