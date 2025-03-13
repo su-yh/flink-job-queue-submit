@@ -1,0 +1,43 @@
+#
+#spring:
+#  flyway:
+#    enabled: false
+#
+#
+#
+#---
+#spring:
+#  config:
+#    activate:
+#      on-profile: suyh,beta
+#
+#data:
+#  mock:
+#    plus:
+#      cds-web-flyway-enabled: true
+#      cds-pgsql-flyway-enabled: true
+#
+#
+#---
+#spring:
+#  config:
+#    activate:
+#      on-profile: zard
+#
+#data:
+#  mock:
+#    plus:
+#      cds-web-flyway-enabled: false
+#      cds-pgsql-flyway-enabled: false
+#
+#---
+#spring:
+#  config:
+#    activate:
+#      on-profile: dev
+#
+#data:
+#  mock:
+#    plus:
+#      cds-web-flyway-enabled: false
+#      cds-pgsql-flyway-enabled: false

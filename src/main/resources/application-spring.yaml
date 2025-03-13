@@ -1,0 +1,13 @@
+spring:
+  main:
+    web-application-type: none
+
+
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: suyh
+
