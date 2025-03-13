@@ -2,8 +2,10 @@ package com.leo.config.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -28,12 +30,6 @@ public class BaseProperties {
 
     @NotBlank
     private String flinkHome;
-    @NotBlank
-    private String cohortJobJar;
-    @NotBlank
-    private String realtimeJobJar;
-    @NotBlank
-    private String repetitionJobJar;
     @NotNull
     private Integer datesStart;
     @NotNull
@@ -42,4 +38,14 @@ public class BaseProperties {
 
     // 执行多少个作业之，重启一次flink 集群
     private Integer restartJobNumber = 10;
+
+    @NestedConfigurationProperty
+    @Valid
+    private final JobProperties jobCohort = new JobProperties();
+    @NestedConfigurationProperty
+    @Valid
+    private final JobProperties jobRealtime = new JobProperties();
+    @NestedConfigurationProperty
+    @Valid
+    private final JobProperties jobRepetition = new JobProperties();
 }

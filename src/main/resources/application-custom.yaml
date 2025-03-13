@@ -6,20 +6,24 @@ spring:
     activate:
       on-profile: suyh
 
-#flink:
-#  job:
-#    queue:
-#      submit:
-#        flink-web-host: "localhost"
-#        flink-web-port: 8991
-#        flink-home: "/home/flink_batch/flink/flink-1.18.0"
-#        cohort-job-jar: "job-jar/flink-cohort-job-3.2.0.jar"
-#        realtime-job-jar: "job-jar/realtime-trend-job-3.2.0.jar"
-#        repetition-job-jar: "job-jar/cdap-repetition-job-3.2.0.jar"
-#        dates-start: 20240117
-#        dates-last: 20240117
-#        pns: "inr,cny,brl,pkr,hy"
-#        restart-job-number: 30
-
-
+flink:
+  job:
+    queue:
+      submit:
+        flink-web-host: "localhost"
+        flink-web-port: 8991
+        flink-home: "/home/flink_batch/flink/flink-1.18.0"
+        dates-start: 20240117
+        dates-last: 20240117
+        pns: "inr,cny,brl,pkr,hy"
+        restart-job-number: 30
+        job-cohort:
+          enabled: true
+          jar-path: "job-jar/flink-cohort-job-3.2.0.jar"
+        job-realtime:
+          enabled: true
+          jar-path: "job-jar/realtime-trend-job-3.2.0.jar"
+        job-repetition:
+          enabled: true
+          jar-path: "job-jar/cdap-repetition-job-3.2.0.jar"
 

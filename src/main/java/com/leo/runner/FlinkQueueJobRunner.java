@@ -1,6 +1,7 @@
 package com.leo.runner;
 
 import com.leo.config.properties.BaseProperties;
+import com.leo.config.properties.JobProperties;
 import com.leo.constants.enums.JobStatus;
 import com.leo.util.BizUtils;
 import com.leo.util.CdapDateUtils;
@@ -72,9 +73,12 @@ public class FlinkQueueJobRunner implements ApplicationRunner {
 
     private void doRun() {
         String flinkHome = properties.getFlinkHome();
-        String cohortJobJar = properties.getCohortJobJar();
-        String realtimeJobJar = properties.getRealtimeJobJar();
-        String repetitionJobJar = properties.getRepetitionJobJar();
+        JobProperties jobCohort = properties.getJobCohort();
+        JobProperties jobRealtime = properties.getJobRealtime();
+        JobProperties jobRepetition = properties.getJobRepetition();
+//        String cohortJobJar = properties.getCohortJobJar();
+//        String realtimeJobJar = properties.getRealtimeJobJar();
+//        String repetitionJobJar = properties.getRepetitionJobJar();
         Integer datesStart = properties.getDatesStart();
         Integer datesLast = properties.getDatesLast();
         Integer restartJobNumber = properties.getRestartJobNumber();
@@ -90,10 +94,10 @@ public class FlinkQueueJobRunner implements ApplicationRunner {
         for (int i = 0; i <= betweenDays; i++) {
             int dates = CdapDateUtils.plusDays(datesStart, i);
 
-            {
+            if (jobCohort.isEnabled()) {
                 log.info("wait flink cluster idle.");
                 waitFlinkClusterIdle();
-                String command = FlinkJobUtils.buildCohortJobSubmitCommand(flinkHome, cohortJobJar, dates, pns);
+                String command = FlinkJobUtils.buildCohortJobSubmitCommand(flinkHome, jobCohort.getJarPath(), dates, pns);
                 log.info("submit cohort job, command: {}", command);
                 String jobId = FlinkJobUtils.flinkJobSubmit(command);
                 log.info("submit cohort job finished, dates: {}, jobId: {}", dates, jobId);
@@ -104,10 +108,10 @@ public class FlinkQueueJobRunner implements ApplicationRunner {
                 waitJobFinished(jobId);
             }
 
-            {
+            if (jobRealtime.isEnabled()) {
                 log.info("wait flink cluster idle.");
                 waitFlinkClusterIdle();
-                String command = FlinkJobUtils.buildRealtimeJobSubmitCommand(flinkHome, realtimeJobJar, dates, pns);
+                String command = FlinkJobUtils.buildRealtimeJobSubmitCommand(flinkHome, jobRealtime.getJarPath(), dates, pns);
                 log.info("submit realtime job, command: {}", command);
                 String jobId = FlinkJobUtils.flinkJobSubmit(command);
                 log.info("submit realtime job finished, dates: {}, jobId: {}", dates, jobId);
@@ -118,10 +122,10 @@ public class FlinkQueueJobRunner implements ApplicationRunner {
                 waitJobFinished(jobId);
             }
 
-            {
+            if (jobRepetition.isEnabled()) {
                 log.info("wait flink cluster idle.");
                 waitFlinkClusterIdle();
-                String command = FlinkJobUtils.buildRepetitionJobSubmitCommand(flinkHome, repetitionJobJar, dates, pns);
+                String command = FlinkJobUtils.buildRepetitionJobSubmitCommand(flinkHome, jobRepetition.getJarPath(), dates, pns);
                 log.info("submit repetition job, command: {}", command);
                 String jobId = FlinkJobUtils.flinkJobSubmit(command);
                 log.info("submit repetition job finished, dates: {}, jobId: {}", dates, jobId);
