@@ -82,6 +82,8 @@ public class FlinkQueueJobRunner implements ApplicationRunner {
             pns = "";
         }
 
+        restartFlinkCluster(flinkHome);
+
         int jobSubmitCount = 0;
         int prevRestartFlinkClusterJobCount = 0;
 
