@@ -163,11 +163,12 @@ public class FlinkQueueJobRunner implements ApplicationRunner {
             for (FlinkJobOverviewResultVo jobOverviewResultVo : jobsOverview) {
                 boolean finishedFlag = flinkJobFinished(jobOverviewResultVo);
                 if (!finishedFlag) {
-                    log.info("job unfinished, jobId: {}", jobOverviewResultVo.getJid());
+                    log.debug("job unfinished, jobId: {}", jobOverviewResultVo.getJid());
                     unfinishedJobSize++;
                 }
             }
 
+            log.info("job unfinished size: {}", unfinishedJobSize);
             if (unfinishedJobSize < properties.getParallelismJob()) {
                 break;
             }
