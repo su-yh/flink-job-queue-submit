@@ -17,6 +17,8 @@ flink:
         dates-last: 20240117
         pns: "inr,cny,brl,pkr,hy"
         restart-job-number: 30
+        # 并行作业数量
+        parallelism-job: 2
         jobs:
           - job-name: cohort
             enabled: true

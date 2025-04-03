@@ -41,6 +41,9 @@ public class BaseProperties {
     // 执行多少个作业之，重启一次flink 集群
     private Integer restartJobNumber = 10;
 
+    // 在一个集群上同时并行的作业数
+    private int parallelismJob = 2;
+
     @NestedConfigurationProperty
     @Valid
     private final List<JobProperties> jobs = new ArrayList<>();

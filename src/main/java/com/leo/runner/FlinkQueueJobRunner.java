@@ -96,8 +96,8 @@ public class FlinkQueueJobRunner implements ApplicationRunner {
                     continue;
                 }
 
-                log.info("wait flink cluster idle.");
-                waitFlinkClusterIdle();
+                log.info("wait flink cluster usable resources.");
+                waitForUsableClusterContainerResources();
 
                 String command = FlinkJobUtils.buildJobSubmitCommand(job.getJobName(), flinkHome, job.getJarPath(), dates, pns);
                 log.info("submit {} job, command: {}", job.getJobName(), command);
@@ -107,50 +107,7 @@ public class FlinkQueueJobRunner implements ApplicationRunner {
                     return;
                 }
                 jobSubmitCount++;
-                waitJobFinished(jobId);
             }
-
-//            if (jobCohort.isEnabled()) {
-//                log.info("wait flink cluster idle.");
-//                waitFlinkClusterIdle();
-//                String command = FlinkJobUtils.buildCohortJobSubmitCommand(flinkHome, jobCohort.getJarPath(), dates, pns);
-//                log.info("submit cohort job, command: {}", command);
-//                String jobId = FlinkJobUtils.flinkJobSubmit(command);
-//                log.info("submit cohort job finished, dates: {}, jobId: {}", dates, jobId);
-//                if (jobId == null) {
-//                    return;
-//                }
-//                jobSubmitCount++;
-//                waitJobFinished(jobId);
-//            }
-//
-//            if (jobRealtime.isEnabled()) {
-//                log.info("wait flink cluster idle.");
-//                waitFlinkClusterIdle();
-//                String command = FlinkJobUtils.buildRealtimeJobSubmitCommand(flinkHome, jobRealtime.getJarPath(), dates, pns);
-//                log.info("submit realtime job, command: {}", command);
-//                String jobId = FlinkJobUtils.flinkJobSubmit(command);
-//                log.info("submit realtime job finished, dates: {}, jobId: {}", dates, jobId);
-//                if (jobId == null) {
-//                    return;
-//                }
-//                jobSubmitCount++;
-//                waitJobFinished(jobId);
-//            }
-//
-//            if (jobRepetition.isEnabled()) {
-//                log.info("wait flink cluster idle.");
-//                waitFlinkClusterIdle();
-//                String command = FlinkJobUtils.buildRepetitionJobSubmitCommand(flinkHome, jobRepetition.getJarPath(), dates, pns);
-//                log.info("submit repetition job, command: {}", command);
-//                String jobId = FlinkJobUtils.flinkJobSubmit(command);
-//                log.info("submit repetition job finished, dates: {}, jobId: {}", dates, jobId);
-//                if (jobId == null) {
-//                    return;
-//                }
-//                jobSubmitCount++;
-//                waitJobFinished(jobId);
-//            }
 
             if (jobSubmitCount - prevRestartFlinkClusterJobCount >= restartJobNumber) {
                 restartFlinkCluster(flinkHome);
@@ -188,6 +145,29 @@ public class FlinkQueueJobRunner implements ApplicationRunner {
             }
 
             BizUtils.sleepIgnoreException(TimeUnit.SECONDS, 1L);
+        }
+    }
+
+    private void waitForUsableClusterContainerResources() {
+        while (true) {
+            BizUtils.sleepIgnoreException(TimeUnit.SECONDS, 1L);
+
+            List<FlinkJobOverviewResultVo> jobsOverview = queryJobOverview();
+            if (jobsOverview == null) {
+                throw new RuntimeException("jobsOverview is null");
+            }
+            int unfinishedJobSize = 0;
+            for (FlinkJobOverviewResultVo jobOverviewResultVo : jobsOverview) {
+                boolean finishedFlag = flinkJobFinished(jobOverviewResultVo);
+                if (!finishedFlag) {
+                    log.info("job unfinished, jobId: {}", jobOverviewResultVo.getJid());
+                    unfinishedJobSize++;
+                }
+            }
+
+            if (unfinishedJobSize < properties.getParallelismJob()) {
+                break;
+            }
         }
     }
 
