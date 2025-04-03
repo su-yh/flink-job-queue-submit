@@ -172,7 +172,7 @@ public class FlinkQueueJobRunner implements ApplicationRunner {
         } while (!flag);
 
         // 重启成功，等一会儿，让集群可以正常使用。
-        for (int i = 0; i < 25; i++) {
+        for (int i = 0; i < 10; i++) {
             BizUtils.sleepIgnoreException(TimeUnit.SECONDS, 1L);
         }
     }
