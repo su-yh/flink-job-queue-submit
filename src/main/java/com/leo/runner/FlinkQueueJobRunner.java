@@ -160,7 +160,10 @@ public class FlinkQueueJobRunner implements ApplicationRunner {
     }
 
     private void restartFlinkCluster(String flinkHome) {
-        waitFlinkClusterIdle();
+        try {
+            waitFlinkClusterIdle();
+        } catch (Exception ignore) {
+        }
 
         boolean flag;
         do {
@@ -168,7 +171,7 @@ public class FlinkQueueJobRunner implements ApplicationRunner {
             flag = FlinkJobUtils.flinkClusterRestart(flinkHome);
         } while (!flag);
 
-        // 重启成功，等30 秒让集群可以正常使用。
+        // 重启成功，等一会儿，让集群可以正常使用。
         for (int i = 0; i < 25; i++) {
             BizUtils.sleepIgnoreException(TimeUnit.SECONDS, 1L);
         }

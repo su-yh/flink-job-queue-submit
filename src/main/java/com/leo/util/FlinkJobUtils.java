@@ -29,18 +29,18 @@ public class FlinkJobUtils {
     }
 
     public static String buildCohortJobSubmitCommand(String flinkHome, String jobJar, int dates, String pns) {
-        return String.format("/bin/bash %s/bin/flink run -d -p 4 %s/%s --cds.flink.batch.date=%d --cds.flink.batch.pns=%s",
-                flinkHome, flinkHome, jobJar, dates, pns);
+        return String.format("/bin/bash %s/bin/flink run -d -p 4 %s --cds.flink.batch.date=%d --cds.flink.batch.pns=%s",
+                flinkHome, jobJar, dates, pns);
     }
 
     public static String buildRealtimeJobSubmitCommand(String flinkHome, String jobJar, int dates, String pns) {
-        return String.format("/bin/bash %s/bin/flink run -d -p 4 %s/%s --realtime.trend.batch.runtime.dates=%d --realtime.trend.batch.runtime.pns=%s",
-                flinkHome, flinkHome, jobJar, dates, pns);
+        return String.format("/bin/bash %s/bin/flink run -d -p 4 %s --realtime.trend.batch.runtime.dates=%d --realtime.trend.batch.runtime.pns=%s",
+                flinkHome, jobJar, dates, pns);
     }
 
     public static String buildRepetitionJobSubmitCommand(String flinkHome, String jobJar, int dates, String pns) {
-        return String.format("/bin/bash %s/bin/flink run -d -p 4 %s/%s --cdap.batch.runtime.form-date=%d --cdap.batch.runtime.pns=%s",
-                flinkHome, flinkHome, jobJar, dates, pns);
+        return String.format("/bin/bash %s/bin/flink run -d -p 4 %s --cdap.batch.runtime.form-date=%d --cdap.batch.runtime.pns=%s",
+                flinkHome, jobJar, dates, pns);
     }
 
     public static String flinkJobSubmit(String command) {
