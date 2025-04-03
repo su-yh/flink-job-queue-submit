@@ -118,9 +118,12 @@ public class FlinkQueueJobRunner implements ApplicationRunner {
 
     private void restartFlinkCluster(String flinkHome) {
         try {
+            log.info("wait flink cluster idle...");
             waitFlinkClusterIdle();
         } catch (Exception ignore) {
         }
+
+        log.info("Prepare to restart the Flink cluster.");
 
         boolean flag;
         do {
