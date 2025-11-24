@@ -25,8 +25,13 @@ def get_jobs_overview():
         return None
 
 
-def wait_flink_cluster_idle():
+def wait_flink_cluster_idle(seconds: int):
+    s: int = 0
     while True:
+        if s >= seconds:
+            break
+        s += 1
+
         time.sleep(1)
 
         jobs_info = get_jobs_overview()
@@ -55,11 +60,20 @@ def wait_flink_cluster_idle():
 
 
 if __name__ == "__main__":
-    flink_cluster_idle = wait_flink_cluster_idle()
+    flink_cluster_idle = wait_flink_cluster_idle(3600)
     logger.info(f"flink_cluster_idle: {flink_cluster_idle}")
     if not flink_cluster_idle:
         sys.exit(1)
 
+    exit_code = os.system("cd /home/suyunhong/flink/flink-merge/flink-1.18.0 && ./bin/stop-cluster.sh")
+    if exit_code != 0:
+        print(f"exit_code: {exit_code}")
+        sys.exit(1)
+
+    flink_cluster_idle = wait_flink_cluster_idle(30)
+    if not flink_cluster_idle:
+        print(f"启动未成功。")
+        sys.exit(1)
 
 
 
