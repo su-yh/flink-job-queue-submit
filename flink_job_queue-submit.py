@@ -5,7 +5,7 @@ import time
 from utils.Logs import Log
 
 file = os.path.basename(sys.argv[0])
-log = Log(file)
+log = Log(file, "E:\\suyhLogs\\submit.log")
 logger = log.Logger
 
 base_url = "http://192.168.8.143:8991"
