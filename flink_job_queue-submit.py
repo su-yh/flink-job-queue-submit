@@ -56,7 +56,9 @@ def wait_flink_cluster_idle():
 
 if __name__ == "__main__":
     flink_cluster_idle = wait_flink_cluster_idle()
-    print()
+    logger.info(f"flink_cluster_idle: {flink_cluster_idle}")
+    if not flink_cluster_idle:
+        sys.exit(1)
 
 
 
