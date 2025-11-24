@@ -30,4 +30,7 @@ hs_err_pid*
 **/node_modules
 /dist
 
+.venv
+
+
 
