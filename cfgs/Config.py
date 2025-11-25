@@ -46,6 +46,7 @@ class FlinkProperties(BaseModel):
 
 class BaseProperties(BaseModel):
     logger_file_path: str = Field(..., description="日志文件路径")
+    base_url: str = Field(..., description="http://localhost:8991")
     date_start: int = Field(..., description="开始日期")
     days: int = Field(..., description="天数")
     flink: list[FlinkProperties] = Field(..., description="flink 相关的配置")
