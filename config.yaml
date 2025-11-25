@@ -1,0 +1,17 @@
+
+
+
+
+base:
+  logger:
+    file-path: "E:\\suyhLogs\\submit.log"
+
+
+
+
+
+
+
+
+
+

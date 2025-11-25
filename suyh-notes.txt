@@ -3,6 +3,8 @@ python3 -m venv .venv
 # windows
 python -m venv .venv
 
+# 使用命令安装所有依赖
+pip install -r requirements.txt
 
 # Linux/macOS 激活命令
 source venv/bin/activate

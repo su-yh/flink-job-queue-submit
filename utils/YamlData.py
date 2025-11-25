@@ -17,28 +17,12 @@ from utils.PathUtils import PathUtils
 
 class HandleYaml:
 
-    def __init__(self, file_path=None):
-        """
-            初始化函数
-            :param file_path: 文件路径，可选参数，默认为None
-        """
-        if file_path:
-            self.file_path = file_path
-        else:
-            root_dir = os.path.dirname(os.path.abspath('.'))
-            # os.path.abspath('.')表示获取当前文件所在目录；os.path.dirname表示获取文件所在父目录；所以整个就是项目的所在路径
-            print(root_dir)
-            self.file_path = root_dir + '\\config\\cem-config.yaml'  # 获取文件所在的相对路径(相对整个项目)
-            # self.data = self.get_data()
+    def __init__(self, file_path: str):
+        self.file_path = file_path
+        self.data = HandleYaml.get_data(file_path)
 
-    # def get_data_fullLoad(self):
-    #     fp = open(self.file_path, encoding='utf-8')
-    #     data = yaml.load(fp, Loader=yaml.FullLoader)
-    #     yaml.warnings({'YAMLLoadWarning': False})
-    #     return data
-
-
-    def get_data(self):
+    @staticmethod
+    def get_data(file_path: str):
         """
             从指定路径读取YAML格式文件并返回解析后的数据
             Returns:
@@ -50,13 +34,13 @@ class HandleYaml:
                 RuntimeError: 当发生其他未知错误时
         """
         try:
-            with open(self.file_path, "r", encoding='utf-8') as fp:
+            with open(file_path, "r", encoding='utf-8') as fp:
                 data = YAML(typ='rt').load(fp)
             return data
         except FileNotFoundError:
-            raise FileNotFoundError(f"文件 {self.file_path} 不存在")
+            raise FileNotFoundError(f"文件 {file_path} 不存在")
         except PermissionError:
-            raise PermissionError(f"没有权限读取文件 {self.file_path}")
+            raise PermissionError(f"没有权限读取文件 {file_path}")
         except ScannerError as e:
             print(f"解析 YAML 文件时出错: {e}")
             print(f"问题出现在行 {e.context_mark.line + 1}, 列 {e.context_mark.column + 1}")
@@ -72,22 +56,20 @@ class HandleYaml:
             raise RuntimeError(f"读取文件时发生未知错误: {str(e)}")
 
 
-    def get_data_by_key(self, key):
-        """
-            根据指定键获取数据
-            参数:
-                key: 要查找的键值
-            返回:
-                与指定键关联的数据值
-            异常:
-                KeyError: 当键不存在或数据类型不支持键访问时抛出
-        """
-        data = self.get_data()
+    def get_value(self, key: str):
         try:
-            return data[key]
+            keys = key.split(".")
+            return HandleYaml.get_by_key(self.data, keys, 0)
         except (KeyError, TypeError) as e:
             raise KeyError(f"Key '{key}' not found in data") from e
 
+    @staticmethod
+    def get_by_key(data, keys: list[str], i: int):
+        key: str = keys[i]
+        d = data[key]
+        if len(keys) - 1 == i:
+            return d
+        return HandleYaml.get_by_key(d, keys, i + 1)
 
     def update_data(self, key, value):
         """
@@ -101,10 +83,9 @@ class HandleYaml:
                 Exception: 当数据更新失败时抛出异常
         """
         try:
-            data = self.get_data()
-            data[key] = value
+            self.data[key] = value
             with open(self.file_path, 'w', encoding='utf-8') as fp:
-                YAML(typ='rt').dump(data, fp)
+                YAML(typ='rt').dump(self.data, fp)
         except Exception as e:
             # 可以根据实际需求添加日志记录或重新抛出异常
             raise Exception(f"Failed to update data: {str(e)}")
@@ -140,6 +121,6 @@ class HandleYaml:
         # 返回一个元组： payload, expect
         return payload, expect
 
-# if __name__ == '__main__':
-#     yaml_data = HandleYaml()
-#     print(yaml_data.get_data())
+if __name__ == '__main__':
+    yaml_data = HandleYaml("../config.yaml")
+    print(yaml_data.get_value("base.logger.file-path"))

@@ -3,6 +3,11 @@ import os
 import sys
 import time
 from utils.Logs import Log
+from utils import YamlData
+
+configYaml = YamlData.HandleYaml("config.yaml")
+file_path = configYaml.get_data_by_key("base.logger.file-path")
+print(f"file_path: {file_path}")
 
 file = os.path.basename(sys.argv[0])
 log = Log(file, "E:\\suyhLogs\\submit.log")
