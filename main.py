@@ -86,7 +86,7 @@ def job_start(f: FlinkProperties, dates: int):
 
 
 def cohort_start(dates: int):
-    logger.info(f"启动同期群作业")
+    logger.info(f"启动同期群作业, dates: {dates}")
 
     cmd: str = (f"cd {properties.flink_home} "
                 f"&& ./bin/flink run -Dexecution.runtime-mode=BATCH -d job-jar/flink-cohort-job-*.jar "
@@ -95,12 +95,23 @@ def cohort_start(dates: int):
     logger.info(f"同期群作业, cmd: {cmd}")
 
 def realtime_start(dates: int):
-    logger.info(f"实时曲线作业, dates: {dates}")
-    pass
+    logger.info(f"启动实时曲线作业, dates: {dates}")
+
+    cmd: str = (f"cd {properties.flink_home} "
+                f"&& ./bin/flink run -Dexecution.runtime-mode=BATCH -d job-jar/realtime-trend-job--*.jar "
+                f"--realtime.trend.batch.runtime.dates={dates} --realtime.trend.batch.runtime.pns={properties.get_pns()} --realtime.trend.batch.runtime.channel-list={properties.get_channels()}")
+    os.system(cmd)
+    logger.info(f"实时曲线作业, cmd: {cmd}")
 
 def repetition_start(dates: int):
-    logger.info(f"重复率作业, dates: {dates}")
-    pass
+    logger.info(f"启动重复率作业, dates: {dates}")
+
+    cmd: str = (f"cd {properties.flink_home} "
+                f"&& ./bin/flink run -Dexecution.runtime-mode=BATCH -d job-jar/cdap-repetition-job--*.jar "
+                f"--cdap.batch.runtime.form-date={dates} --cdap.batch.runtime.pns={properties.get_pns()} --cdap.batch.runtime.channel-list={properties.get_channels()}")
+    os.system(cmd)
+    logger.info(f"重复率作业, cmd: {cmd}")
+
 
 
 if __name__ == "__main__":
@@ -123,7 +134,7 @@ if __name__ == "__main__":
 
         # 启动成功，10 秒后开始提交作业
         logger.info(f"启动成功，10 秒后开始提交作业")
-        for i in range(10):
+        for n in range(10):
             time.sleep(1)
 
         dates = DateUtils.calculate_target_date(properties.date_start, i)
