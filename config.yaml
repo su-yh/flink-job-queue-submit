@@ -3,10 +3,38 @@
 
 
 base:
-  logger:
-    file-path: "E:\\suyhLogs\\submit.log"
-
-
+  logger_file_path: "Log\\unknown.log"
+  flink:
+    - job_name: "cohort"
+      enable: false
+      date_start: 20220101
+      days: 7
+      pns:
+        - cny
+        - hy
+      channels:
+        - cny_01
+        - cny_02
+    - job_name: "realtime"
+      enable: false
+      date_start: 20220101
+      days: 7
+      pns:
+        - cny
+        - hy
+      channels:
+        - cny_01
+        - cny_02
+    - job_name: "repetition"
+      enable: false
+      date_start: 20220101
+      days: 7
+      pns:
+        - cny
+        - hy
+      channels:
+        - cny_01
+        - cny_02
 
 
 

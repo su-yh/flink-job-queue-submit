@@ -5,12 +5,10 @@ import time
 from utils.Logs import Log
 from utils import YamlData
 
-configYaml = YamlData.HandleYaml("config.yaml")
-file_path = configYaml.get_data_by_key("base.logger.file-path")
-print(f"file_path: {file_path}")
+cfg = YamlData.HandleYaml("config.yaml")
 
 file = os.path.basename(sys.argv[0])
-log = Log(file, "E:\\suyhLogs\\submit.log")
+log = Log(file, cfg.get_value("base.logger.file-path"))
 logger = log.Logger
 
 base_url = "http://192.168.8.143:8991"
@@ -77,8 +75,13 @@ if __name__ == "__main__":
 
     flink_cluster_idle = wait_flink_cluster_idle(30)
     if not flink_cluster_idle:
-        print(f"启动未成功。")
+        print(f"未启动成功。")
         sys.exit(1)
+
+    # 启动成功，10 秒后开始提交作业
+    for i in range(10):
+        time.sleep(1)
+
 
 
 

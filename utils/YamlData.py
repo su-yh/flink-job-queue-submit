@@ -4,16 +4,11 @@
 # @File    : YamlData.py
 
 
-import os
-import yaml
 from ruamel.yaml import YAML, YAMLError
 from ruamel.yaml.scanner import ScannerError
 
 from utils.PathUtils import PathUtils
 
-
-# 初始化ruamel.yaml的RoundRipLoader和RoundTripDumper
-# ryaml = YAML(typ='rt')
 
 class HandleYaml:
 
@@ -59,7 +54,10 @@ class HandleYaml:
     def get_value(self, key: str):
         try:
             keys = key.split(".")
-            return HandleYaml.get_by_key(self.data, keys, 0)
+            d = self.data
+            for k in keys:
+                d = d[k]
+            return d
         except (KeyError, TypeError) as e:
             raise KeyError(f"Key '{key}' not found in data") from e
 
@@ -121,6 +119,6 @@ class HandleYaml:
         # 返回一个元组： payload, expect
         return payload, expect
 
-if __name__ == '__main__':
-    yaml_data = HandleYaml("../config.yaml")
-    print(yaml_data.get_value("base.logger.file-path"))
+# if __name__ == '__main__':
+#     yaml_data = HandleYaml("../config.yaml")
+#     print(yaml_data.get_value("base.logger.file-path"))
