@@ -98,7 +98,7 @@ def realtime_start(dates: int):
     logger.info(f"启动实时曲线作业, dates: {dates}")
 
     cmd: str = (f"cd {properties.flink_home} "
-                f"&& ./bin/flink run -Dexecution.runtime-mode=BATCH -d job-jar/realtime-trend-job--*.jar "
+                f"&& ./bin/flink run -Dexecution.runtime-mode=BATCH -d job-jar/realtime-trend-job-*.jar "
                 f"--realtime.trend.batch.runtime.dates={dates} --realtime.trend.batch.runtime.pns={properties.get_pns()} --realtime.trend.batch.runtime.channel-list={properties.get_channels()}")
     os.system(cmd)
     logger.info(f"实时曲线作业, cmd: {cmd}")
@@ -107,7 +107,7 @@ def repetition_start(dates: int):
     logger.info(f"启动重复率作业, dates: {dates}")
 
     cmd: str = (f"cd {properties.flink_home} "
-                f"&& ./bin/flink run -Dexecution.runtime-mode=BATCH -d job-jar/cdap-repetition-job--*.jar "
+                f"&& ./bin/flink run -Dexecution.runtime-mode=BATCH -d job-jar/cdap-repetition-job-*.jar "
                 f"--cdap.batch.runtime.form-date={dates} --cdap.batch.runtime.pns={properties.get_pns()} --cdap.batch.runtime.channel-list={properties.get_channels()}")
     os.system(cmd)
     logger.info(f"重复率作业, cmd: {cmd}")
