@@ -38,7 +38,7 @@ def create_file(log_filename=None):
 
 
 class Log(object):
-    def __init__(self, name, log_filename=None, level='DEBUG'):
+    def __init__(self, log_filename, name="", level='DEBUG'):
         self.__name = name
         self.__log_filename = log_filename
         self.__path = create_file(self.__log_filename)
@@ -62,9 +62,8 @@ class Log(object):
 
     def __set_formatter(self, stream_handler, file_handler):
         """设置日志输出格式"""
-        formatter = logging.Formatter('%(asctime)s-%(name)s-%(filename)s-[line:%(lineno)d]'
-                                      '-%(levelname)s-[日志信息]: %(message)s',
-                                      datefmt='%a, %d %b %Y %H:%M:%S')
+        formatter = logging.Formatter('%(asctime)s-[%(filename)s:%(lineno)d]-%(levelname)s: %(message)s',
+                                      datefmt='%Y-%m-%d %H:%M:%S')
         stream_handler.setFormatter(formatter)
         file_handler.setFormatter(formatter)
 

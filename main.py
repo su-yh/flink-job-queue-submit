@@ -12,7 +12,7 @@ cfg: Config = Config("config.yaml")
 properties: BaseProperties = cfg.properties
 
 file = os.path.basename(sys.argv[0])
-log = Log(file, properties.logger_file_path)
+log = Log(properties.logger_file_path, 'INFO')
 logger = log.Logger
 
 # base_url = "http://192.168.8.143:8991"
