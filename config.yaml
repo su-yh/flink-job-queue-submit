@@ -4,11 +4,11 @@
 
 base:
   logger_file_path: "Log\\unknown.log"
+  date_start: 20220101
+  days: 7
   flink:
     - job_name: "cohort"
       enable: false
-      date_start: 20220101
-      days: 7
       pns:
         - cny
         - hy
@@ -17,8 +17,6 @@ base:
         - cny_02
     - job_name: "realtime"
       enable: false
-      date_start: 20220101
-      days: 7
       pns:
         - cny
         - hy
@@ -27,8 +25,6 @@ base:
         - cny_02
     - job_name: "repetition"
       enable: false
-      date_start: 20220101
-      days: 7
       pns:
         - cny
         - hy

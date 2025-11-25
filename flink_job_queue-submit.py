@@ -3,12 +3,16 @@ import os
 import sys
 import time
 from utils.Logs import Log
+from utils.DateUtils import DateUtils
 from utils import YamlData
+from cfgs.Config import Config, BaseProperties, FlinkProperties, JobNameEnum
 
-cfg = YamlData.HandleYaml("config.yaml")
+# cfg = YamlData.HandleYaml("config.yaml")
+cfg: Config = Config("config.yaml")
+properties: BaseProperties = cfg.properties
 
 file = os.path.basename(sys.argv[0])
-log = Log(file, cfg.get_value("base.logger.file-path"))
+log = Log(file, properties.logger_file_path)
 logger = log.Logger
 
 base_url = "http://192.168.8.143:8991"
@@ -61,8 +65,43 @@ def wait_flink_cluster_idle(seconds: int):
     pass
 
 
+def job_start(f: FlinkProperties, dates: int):
+    match f.job_name:
+        case JobNameEnum.COHORT:
+            cohort_start(f, dates)
+
+        case JobNameEnum.REALTIME:
+            realtime_start(f, dates)
+
+        case JobNameEnum.REPETITION:
+            repetition_start(f, dates)
+
+        case _:
+            raise ValueError(f"不支持的作业类型：{f.job_name.value}")
+
+
+def cohort_start(f: FlinkProperties, dates: int):
+    if not f.enable:
+        return
+
+    logger.info(f"启动同期群作业, dates: {dates}")
+
+def realtime_start(f: FlinkProperties, dates: int):
+    if not f.enable:
+        return
+
+    logger.info(f"实时曲线作业, dates: {dates}")
+    pass
+
+def repetition_start(f: FlinkProperties, dates: int):
+    if not f.enable:
+        return
+    logger.info(f"重复率作业, dates: {dates}")
+    pass
+
 
 if __name__ == "__main__":
+
     flink_cluster_idle = wait_flink_cluster_idle(3600)
     logger.info(f"flink_cluster_idle: {flink_cluster_idle}")
     if not flink_cluster_idle:
@@ -83,5 +122,15 @@ if __name__ == "__main__":
         time.sleep(1)
 
 
+    for i in range(properties.days):
+        dates = DateUtils.calculate_target_date(properties.date_start, i)
+
+        print(f"dates: {dates}")
+        for f in properties.flink:
+            job_start(f, dates)
+
+            flag = wait_flink_cluster_idle(86400)
+            if not flag:
+                break
 
 

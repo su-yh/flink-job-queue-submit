@@ -9,9 +9,10 @@ from utils.YamlData import HandleYaml
 
 class Config:
 
-    def __init__(self, file_path: str):
+    def __init__(self, file_path: str, prev = "base"):
         self.file_path = file_path
-        self.data = HandleYaml.get_data(file_path)
+        data = HandleYaml.get_data(file_path)
+        self.data = data[prev]
         self.properties: BaseProperties = BaseProperties(**self.data)
 
     def get_data(self):
@@ -39,14 +40,14 @@ class JobNameEnum(str, Enum):
 class FlinkProperties(BaseModel):
     enable: bool = Field(..., description="启用/禁用")
     job_name: JobNameEnum = Field(..., description=f"作业名称")
-    date_start: int = Field(..., description="开始日期")
-    days: int = Field(..., description="天数")
-    pns: Optional[list[str]] = Field(..., description="pns")
-    channels: Optional[list[str]] = Field(..., description="channels")
+    pns: Optional[list[str]] = Field(None, description="pns")
+    channels: Optional[list[str]] = Field(None, description="channels")
 
 
 class BaseProperties(BaseModel):
     logger_file_path: str = Field(..., description="日志文件路径")
+    date_start: int = Field(..., description="开始日期")
+    days: int = Field(..., description="天数")
     flink: list[FlinkProperties] = Field(..., description="flink 相关的配置")
 
 
@@ -54,11 +55,11 @@ class BaseProperties(BaseModel):
 
 
 
-# 3. 使用示例（验证枚举的校验效果）
-if __name__ == "__main__":
-    cfg = Config("../config.yaml")
-    properties: BaseProperties = cfg.get_data()
-    print(f"cfg.flink: {properties.flink}")
+# # 3. 使用示例（验证枚举的校验效果）
+# if __name__ == "__main__":
+#     cfg = Config("../config.yaml")
+#     properties: BaseProperties = cfg.get_data()
+#     print(f"cfg.flink: {properties.flink}")
 
 
 
