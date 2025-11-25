@@ -43,6 +43,19 @@ class FlinkProperties(BaseModel):
     pns: Optional[list[str]] = Field(None, description="pns")
     channels: Optional[list[str]] = Field(None, description="channels")
 
+    def get_pns(self) -> str:
+        """将 pns 列表转为逗号分隔字符串，自动处理 None 和空值"""
+        if self.pns is None:
+            return ""
+        valid_pns = [item.strip() for item in self.pns if item and item.strip()]
+        return ",".join(valid_pns)
+
+    def get_channels(self) -> str:
+        if self.channels is None:
+            return ""
+        valid_pns = [item.strip() for item in self.channels if item and item.strip()]
+        return ",".join(valid_pns)
+
 
 class BaseProperties(BaseModel):
     logger_file_path: str = Field(..., description="日志文件路径")

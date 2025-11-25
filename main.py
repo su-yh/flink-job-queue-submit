@@ -20,8 +20,9 @@ logger = log.Logger
 base_url = properties.base_url
 
 def get_jobs_overview():
+    url = base_url + "/jobs/overview"
+
     try:
-        url = base_url + "/jobs/overview"
         response = requests.get(url)
         if response.status_code == 200:
             return response.json()
@@ -29,7 +30,7 @@ def get_jobs_overview():
             logger.info(f"请求失败，状态码: {response.status_code}")
             return None
     except requests.RequestException as e:
-        logger.info(f"请求发生异常: {e}")
+        logger.info(f"请求（{url}）发生异常: {e}")
         return None
 
 
@@ -85,6 +86,9 @@ def cohort_start(f: FlinkProperties, dates: int):
     if not f.enable:
         return
 
+    os.system(f"cd /home/suyunhong/flink/flink-merge/flink-1.18.0 && "
+              f"./bin/flink run -Dexecution.runtime-mode=BATCH -d job-jar/flink-cohort-job-*.jar --cds.flink.batch.date=${dates} "
+              f"--cds.flink.batch.pns={f.get_pns()} --cds.flink.batch.channel-list={f.get_channels()}")
     logger.info(f"启动同期群作业, dates: {dates}")
 
 def realtime_start(f: FlinkProperties, dates: int):
@@ -108,7 +112,7 @@ if __name__ == "__main__":
     if not flink_cluster_idle:
         sys.exit(1)
 
-    exit_code = os.system("cd /home/suyunhong/flink/flink-merge/flink-1.18.0 && ./bin/stop-cluster.sh")
+    exit_code = os.system("cd /home/suyunhong/flink/flink-merge/flink-1.18.0 && ./restart.sh")
     if exit_code != 0:
         logger.info(f"exit_code: {exit_code}")
         sys.exit(1)

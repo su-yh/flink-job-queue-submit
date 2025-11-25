@@ -3,12 +3,15 @@ python3 -m venv .venv
 # windows
 python -m venv .venv
 
-# 使用命令安装所有依赖
-pip install -r requirements.txt
 
 # Linux/macOS 激活命令
-source venv/bin/activate
+source ./.venv/bin/activate
 #  激活后，终端提示符前会显示 (venv)，表示当前处于虚拟环境中。
+
+# 使用命令安装所有依赖
+# 在ubuntu 中需要进入虚拟环境后再执行
+pip install -r requirements.txt
+
 
 # 在虚拟环境中安装 sqlalchemy：
 # 虚拟环境中直接用 pip 即可
@@ -29,7 +32,7 @@ deactivate
 
 # 在shell 脚本中也是一样
 # 激活虚拟环境
-source ./venv/bin/activate
+source ./.venv/bin/activate
 # 执行脚本
 python sync_scheduling_transfer_record_tag.py
 # 退出虚拟环境

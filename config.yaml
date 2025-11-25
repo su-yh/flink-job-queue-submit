@@ -3,7 +3,7 @@
 
 
 base:
-  logger_file_path: "Log\\unknown.log"
+  logger_file_path: "Logs/main.log"
   base_url: "http://localhost:8991"
   date_start: 20220101
   days: 7
