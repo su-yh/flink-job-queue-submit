@@ -5,33 +5,22 @@
 base:
   logger_file_path: "Logs/main.log"
   base_url: "http://localhost:8991"
-  date_start: 20220101
-  days: 7
+  flink_home: "/home/suyunhong/flink/flink-merge/flink-1.18.0"
+  date_start: 20220108
+  days: 1
+  pns:
+    - "inr"
+    - "cny"
+  channels:
+    - "inr_subch_1075112"
+    - "cny_subch_1297813"
   flink:
     - job_name: "cohort"
-      enable: false
-      pns:
-        - cny
-        - hy
-      channels:
-        - cny_01
-        - cny_02
+      enable: true
     - job_name: "realtime"
       enable: false
-      pns:
-        - cny
-        - hy
-      channels:
-        - cny_01
-        - cny_02
     - job_name: "repetition"
       enable: false
-      pns:
-        - cny
-        - hy
-      channels:
-        - cny_01
-        - cny_02
 
 
 

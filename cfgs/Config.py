@@ -40,6 +40,15 @@ class JobNameEnum(str, Enum):
 class FlinkProperties(BaseModel):
     enable: bool = Field(..., description="启用/禁用")
     job_name: JobNameEnum = Field(..., description=f"作业名称")
+
+
+class BaseProperties(BaseModel):
+    logger_file_path: str = Field(..., description="日志文件路径")
+    base_url: str = Field(..., description="http://localhost:8991")
+    flink_home: str = Field(..., description="flink 家目录")
+    date_start: int = Field(..., description="开始日期")
+    days: int = Field(..., description="天数")
+    flink: list[FlinkProperties] = Field(..., description="flink 相关的配置")
     pns: Optional[list[str]] = Field(None, description="pns")
     channels: Optional[list[str]] = Field(None, description="channels")
 
@@ -55,14 +64,6 @@ class FlinkProperties(BaseModel):
             return ""
         valid_pns = [item.strip() for item in self.channels if item and item.strip()]
         return ",".join(valid_pns)
-
-
-class BaseProperties(BaseModel):
-    logger_file_path: str = Field(..., description="日志文件路径")
-    base_url: str = Field(..., description="http://localhost:8991")
-    date_start: int = Field(..., description="开始日期")
-    days: int = Field(..., description="天数")
-    flink: list[FlinkProperties] = Field(..., description="flink 相关的配置")
 
 
 

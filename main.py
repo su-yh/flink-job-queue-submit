@@ -68,39 +68,37 @@ def wait_flink_cluster_idle(seconds: int):
 
 
 def job_start(f: FlinkProperties, dates: int):
+    if not f.enable:
+        return
+
     match f.job_name:
         case JobNameEnum.COHORT:
-            cohort_start(f, dates)
+            cohort_start(dates)
 
         case JobNameEnum.REALTIME:
-            realtime_start(f, dates)
+            realtime_start(dates)
 
         case JobNameEnum.REPETITION:
-            repetition_start(f, dates)
+            repetition_start(dates)
 
         case _:
             raise ValueError(f"不支持的作业类型：{f.job_name.value}")
 
 
-def cohort_start(f: FlinkProperties, dates: int):
-    if not f.enable:
-        return
+def cohort_start(dates: int):
+    logger.info(f"启动同期群作业")
 
-    os.system(f"cd /home/suyunhong/flink/flink-merge/flink-1.18.0 && "
-              f"./bin/flink run -Dexecution.runtime-mode=BATCH -d job-jar/flink-cohort-job-*.jar --cds.flink.batch.date=${dates} "
-              f"--cds.flink.batch.pns={f.get_pns()} --cds.flink.batch.channel-list={f.get_channels()}")
-    logger.info(f"启动同期群作业, dates: {dates}")
+    cmd: str = (f"cd {properties.flink_home} "
+                f"&& ./bin/flink run -Dexecution.runtime-mode=BATCH -d job-jar/flink-cohort-job-*.jar "
+                f"--cds.flink.batch.date={dates} --cds.flink.batch.pns={properties.get_pns()} --cds.flink.batch.channel-list={properties.get_channels()}")
+    os.system(cmd)
+    logger.info(f"同期群作业, cmd: {cmd}")
 
-def realtime_start(f: FlinkProperties, dates: int):
-    if not f.enable:
-        return
-
+def realtime_start(dates: int):
     logger.info(f"实时曲线作业, dates: {dates}")
     pass
 
-def repetition_start(f: FlinkProperties, dates: int):
-    if not f.enable:
-        return
+def repetition_start(dates: int):
     logger.info(f"重复率作业, dates: {dates}")
     pass
 
@@ -112,25 +110,25 @@ if __name__ == "__main__":
     if not flink_cluster_idle:
         sys.exit(1)
 
-    exit_code = os.system("cd /home/suyunhong/flink/flink-merge/flink-1.18.0 && ./restart.sh")
-    if exit_code != 0:
-        logger.info(f"exit_code: {exit_code}")
-        sys.exit(1)
-
-    flink_cluster_idle = wait_flink_cluster_idle(30)
-    if not flink_cluster_idle:
-        logger.info(f"未启动成功。")
-        sys.exit(1)
-
-    # 启动成功，10 秒后开始提交作业
-    for i in range(10):
-        time.sleep(1)
-
-
     for i in range(properties.days):
+        exit_code = os.system(f"cd {properties.flink_home} && ./restart.sh")
+        if exit_code != 0:
+            logger.info(f"exit_code: {exit_code}")
+            sys.exit(1)
+
+        flink_cluster_idle = wait_flink_cluster_idle(30)
+        if not flink_cluster_idle:
+            logger.info(f"未启动成功。")
+            sys.exit(1)
+
+        # 启动成功，10 秒后开始提交作业
+        logger.info(f"启动成功，10 秒后开始提交作业")
+        for i in range(10):
+            time.sleep(1)
+
         dates = DateUtils.calculate_target_date(properties.date_start, i)
 
-        logger.info(f"dates: {dates}")
+        logger.info(f"准备提交作业，dates: {dates}")
         for f in properties.flink:
             job_start(f, dates)
 
