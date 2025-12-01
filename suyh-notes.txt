@@ -21,7 +21,7 @@ pip install openpyxl
 pip install mysql-connector-python
 
 # 运行脚本
-python sync_scheduling_transfer_record_tag.py
+python main.py
 
 # 退出 脚本
 deactivate
@@ -34,7 +34,7 @@ deactivate
 # 激活虚拟环境
 source ./.venv/bin/activate
 # 执行脚本
-python sync_scheduling_transfer_record_tag.py
+python main.py
 # 退出虚拟环境
 deactivate
 
